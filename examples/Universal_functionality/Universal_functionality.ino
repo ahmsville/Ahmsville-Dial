@@ -457,7 +457,7 @@ void LEDanimation() {
 void rainbow() {
   EVERY_N_MILLISECONDS( 20 ) {  //frames/milliseconds delay
     // FastLED's built-in rainbow generator
-    fill_rainbow( leds, NUM_LEDS, gHue, 10);
+    fill_rainbow( leds, NUM_LEDS, gHue, 2);
     // send the 'leds' array out to the actual LED strip
     FastLED.show();
   }

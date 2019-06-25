@@ -6,8 +6,7 @@
    
    ---------------------Windows---------------------
     Download and install autohotkey from - https://autohotkey.com/download/
-    Download Media_control script from - https://drive.google.com/open?id=19c7-OofvXPggWWJ0wtWSpAH8Yd8I73yD
-    Right click on the script to run it.
+    Right click on the Media_control script included in the library directory to run it.
     upload sketch to the dial and it should be able to control you PC Media.
 
     Follow the instructions on - https://www.maketecheasier.com/schedule-autohotkey-startup-windows/  to make the script run at startup.
