@@ -25,6 +25,11 @@ knob	KEYWORD2
 normalize	KEYWORD2
 get_knobState	KEYWORD2
 dialCommand	KEYWORD2
+dialCommand_keyPress	KEYWORD2
+dialCommand_movePointer	KEYWORD2
+dialCommand_mouseClick	KEYWORD2
+dialCommand_mousePress	KEYWORD2
+dialCommand_Release	KEYWORD2
 set_touchAutoSensitivity	KEYWORD2
 
 #######################################

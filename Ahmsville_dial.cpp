@@ -10,43 +10,33 @@ Ahmsville_dial::Ahmsville_dial() {
 
 }
 
-void Ahmsville_dial::initialize_ahmsvilleDial() {
-	set_touchInputPins(15, 16, 0, 0, 0);
-	set_touchTypeThresholds(20, 40, 80, 120);
-	set_touchAutoSensitivity(0, 0.8, true);
-	set_knobPoleStateValues(180, 512, 840);
-	set_haptics(9, 25, 12, 200);
-	initialize_ahmsvilleDialCustom(1);
+void Ahmsville_dial::initialize_ahmsvilleDial(int numoftouchinputs) {
+	if (numoftouchinputs == 1) {
+		Ahmsville_dialTouch.set_capTouchPins(15, 16, 0, 0, 0);   //sets the arduino pins used for the capacitive touch (sendpin, pad1, pad2, pad3, pad4)
+	}
+	else if (numoftouchinputs == 2) {
+		Ahmsville_dialTouch.set_capTouchPins(15, 16, 0, 0, 0);   //sets the arduino pins used for the capacitive touch (sendpin, pad1, pad2, pad3, pad4)
+	}
+	else if (numoftouchinputs == 4) {
+		Ahmsville_dialTouch.set_capTouchPins(15, 16, 0, 0, 0);   //sets the arduino pins used for the capacitive touch (sendpin, pad1, pad2, pad3, pad4)
+	}
+	Ahmsville_dialTouch.set_inputTypeThresholds(20, 40, 80, 120);  //sets the thresholds for the four input types  (singletap, shortpress, longpress, doubletapspeed)
+	Ahmsville_dialTouch.set_adaptiveSensitivity(numoftouchinputs, 0.3, true);  //set touch sensitivity to auto
+	Ahmsville_dialKnob.set_poleStateValues(256, 512, 768);   //set ADC values for the poles (northpole, neutral, southpole)
+	set_haptics(9, 60, 20, 255);
+	Ahmsville_dialTouch.initialize_capTouch(numoftouchinputs);
+	Ahmsville_dialKnob.initialize_encoder();
 	Keyboard.begin();
 	Mouse.begin();
 	delay(2000);
 }
 
-void Ahmsville_dial::initialize_ahmsvilleDialCustom(int numoftouchinputs) {
-	Ahmsville_dialTouch.initialize_capTouch(numoftouchinputs);
-	Ahmsville_dialKnob.initialize_encoder();
-	Keyboard.begin();
-	Mouse.begin();
+void Ahmsville_dial::initialize_ahmsvilleDialCustom(int touchpin) {
+
 }
 
-void Ahmsville_dial::set_touchInputPins(int sp, int rp0, int rp1, int rp2, int rp3) {
-	Ahmsville_dialTouch.set_capTouchPins(sp, rp0, rp1, rp2, rp3);
-}
-
-void Ahmsville_dial::set_touchTypeThresholds(int scl, int spr, int lpr, int dcls) {
-	Ahmsville_dialTouch.set_inputTypeThresholds(scl, spr, lpr, dcls);
-}
-
-void Ahmsville_dial::set_touchDetectionThreshold(double dth, double rth) {
-	Ahmsville_dialTouch.set_detectionThreshold(dth, rth);
-}
-
-void Ahmsville_dial::set_touchAutoSensitivity(int touchpin, double mastersensitivity, bool actv) {
-	Ahmsville_dialTouch.set_adaptiveSensitivity(touchpin, mastersensitivity, actv);
-}
-
-void Ahmsville_dial::set_knobPoleStateValues(int np, int nu, int sp) {
-	Ahmsville_dialKnob.set_poleStateValues(np, nu, sp);
+void Ahmsville_dial::set_touchDetectionThreshold(int padnum, double dth, double rth) {
+	Ahmsville_dialTouch.set_detectionThreshold(padnum, dth, rth);
 }
 
 void Ahmsville_dial::set_haptics(int pin, int durationtouch, int durationknob, int strength) {
@@ -79,12 +69,24 @@ int Ahmsville_dial::knob() {
 	return knob;
 }
 
-void Ahmsville_dial::normalize() {
-	Ahmsville_dialTouch.update_basevalueFromNoise(0);
+void Ahmsville_dial::normalize(int numoftouchinputs) {
+	if (numoftouchinputs == 1) {
+		Ahmsville_dialTouch.update_basevalueFromNoise(0);
+	}
+	else if (numoftouchinputs == 2) {
+		Ahmsville_dialTouch.update_basevalueFromNoise(0);
+		Ahmsville_dialTouch.update_basevalueFromNoise(1);
+	}
+	else if (numoftouchinputs == 4) {
+		Ahmsville_dialTouch.update_basevalueFromNoise(0);
+		Ahmsville_dialTouch.update_basevalueFromNoise(1);
+		Ahmsville_dialTouch.update_basevalueFromNoise(2);
+		Ahmsville_dialTouch.update_basevalueFromNoise(3);
+	}
 	Ahmsville_dialKnob.recaliberate_startPosition();
 }
 
-void Ahmsville_dial::normalize(int pad) {
+void Ahmsville_dial::normalizeCustom(int pad) {
 	Ahmsville_dialKnob.recaliberate_startPosition();
 	Ahmsville_dialTouch.update_basevalueFromNoise(pad);
 }
@@ -118,4 +120,33 @@ void Ahmsville_dial::dialCommand(char func) { //single key shortcuts e.g Tab
 	Keyboard.releaseAll();
 }
 
+void Ahmsville_dial::dialCommand_keyPress(char key) {
+	Keyboard.press(key);
+	delay(cdelay);
+}
 
+void Ahmsville_dial::dialCommand_movePointer(char axis, int amount) {
+	if (axis == 'x') {
+		Mouse.move((amount), 0, 0);
+		delay(cdelay);
+	}
+	else if (axis == 'y') {
+		Mouse.move(0, (amount), 0);
+		delay(cdelay);
+	}
+}
+
+void Ahmsville_dial::dialCommand_mouseClick(char button) {
+	Mouse.click(button);
+	delay(cdelay);
+}
+
+void Ahmsville_dial::dialCommand_mousePress(char button) {
+	Mouse.press(button);
+	delay(cdelay);
+}
+
+void Ahmsville_dial::dialCommand_Release(char button) {
+	Keyboard.releaseAll();
+	Mouse.release(button);
+}

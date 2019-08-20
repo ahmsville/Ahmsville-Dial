@@ -15,12 +15,8 @@ private:
 
 public:
 	Ahmsville_dial();
-	void set_touchInputPins(int sp, int rp0, int rp1, int rp2, int rp3);  //sets the arduino pins used for the capacitive touch (sendpin, pad1, pad2, pad3, pad4)
-	void set_touchTypeThresholds(int scl, int spr, int lpr, int dcls);  //sets the thresholds for the four input types  (singletap, shortpress, longpress, doubletapspeed)
-	void set_touchDetectionThreshold(double dth, double rth);   //set capacitive touch sensitivity in the form of detection, rejection thresholds values
-	void set_touchAutoSensitivity(int touchpin, double mastersensitivity, bool actv);  //set touch sensitivity to auto
-	void set_knobPoleStateValues(int np, int nu, int sp);   //set ADC values for the poles (northpole, neutral, southpole)
-	void initialize_ahmsvilleDial();  //initialize ahmsville dial
+	void set_touchDetectionThreshold(int padnum, double dth, double rth);   //set capacitive touch sensitivity in the form of detection, rejection thresholds values
+	void initialize_ahmsvilleDial(int numoftouchinputs);  //initialize ahmsville dial
 	void initialize_ahmsvilleDialCustom(int touchpin);  //initialize ahmsville dial with custom settings
 	void set_haptics(int pin, int durationtouch, int durationknob, int strength);  //set arduino haptics variables (arduino pwm pin connected to viberation motor, duration of haptics(ms), strength from 0-255)
 	
@@ -34,8 +30,8 @@ public:
 
 	/*----------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-	void normalize();
-	void normalize(int pad);
+	void normalize(int numoftouchinputs);
+	void normalizeCustom(int pad);
 	int get_knobState(int sensornum);
 
 	/*-------------------------------------------------------Dial keyboard shortcut functions-------------------------------------------------------------------------------*/
@@ -43,6 +39,11 @@ public:
 	void dialCommand(char keystroke1, char keystroke2, char func); //3 chain command shortcuts e.g CTRL+ALT+N
 	void dialCommand(char keystroke1, char func);  //2 chain command shortcuts e.g CTRL+N
 	void dialCommand(char func); //single key shortcuts e.g Tab
+	void dialCommand_keyPress(char key);
+	void dialCommand_movePointer(char axis, int amount);
+	void dialCommand_mouseClick(char button);
+	void dialCommand_mousePress(char button);
+	void dialCommand_Release(char button);
 
 };
 

@@ -2,14 +2,14 @@
 #include <FastLED.h>
 
 /*
- * This sketch combines all the functionalities of the other examples into one.
+   This sketch combines all the functionalities of the other examples into one.
 
    ---(in app controls) Different applications are maped to different colors so you can switch between applications by switching colors.
    (longpress to enter selection mode, turn the knob to change application/color, single tap to activate, double tap to activate and quick launch the application).
-   
+
    ---(Media control) Dial defaults to a media controller when in idle mode, the variable "sleeptime" determines how long it takes the dial to enter idle mode.
    (longpress to exit idle mode)
-   
+
    ---(Pc login with color) When color is white, dial functions as a passKey to login to your pc with a predefined color.
    (turn the knob to find key color, single tap to enter password)
 */
@@ -23,7 +23,7 @@ Ahmsville_dial ahmsville_dial = Ahmsville_dial(); //create a new ahmsville dial 
 #define NUM_LEDS    4
 CRGB leds[NUM_LEDS];
 
-#define BRIGHTNESS         127
+#define BRIGHTNESS         255
 
 uint8_t gHue = 0; // rotating "base color"
 bool fadeswitch = 1;
@@ -61,18 +61,18 @@ char app4 = ' ';
 //----------------------------application specific shortcut keys--------------------------
 char Chrome[5] = {KEY_F5, 'k', 'f', KEY_PAGE_UP, KEY_PAGE_DOWN}; //maped to color orange
 char Adobeuniversal[4] = {KEY_DOWN_ARROW, KEY_UP_ARROW, '-', '='}; //maped to color lime
-char Premierepro[5] = {'i', 'o', 'f', KEY_LEFT_ARROW, KEY_RIGHT_ARROW}; //maped to color purple
+char Premierepro[5] = {32, 'o', 'f', KEY_LEFT_ARROW, KEY_RIGHT_ARROW}; //maped to color purple
 char Altium[5] = {'p', 3, 'G', KEY_PAGE_UP, KEY_PAGE_DOWN}; //maped to color brown
 
 void setup()
 {
-  ahmsville_dial.initialize_ahmsvilleDial();   //initialize ahmsville dial
+  ahmsville_dial.initialize_ahmsvilleDial(1);   //initialize ahmsville dial (specify the number of capacitive touch pads your dial version uses)
   initializeLED();
 }
 
 void loop()
 {
-  ahmsville_dial.normalize();
+  ahmsville_dial.normalize(1);
   count += ahmsville_dial.knob();  //detecting knob rotations (returns a signed integer in relation to the direction of the rotation)
   touch = ahmsville_dial.capTouch();  //detecting capacitive touch (returns integer 1 - 4 or 0 when no touch is detected)
   update_LEDS();
@@ -94,14 +94,14 @@ void loop()
 void idle_time() {
   long currenttime = millis();
   if (count == 0 && touch == 0) { //check if dial is untouched
-    if ((currenttime - timer) >= (sleeptime*60000)) { //check if dial as been idle for more than the specified sleeptime
+    if ((currenttime - timer) >= (sleeptime * 60000)) { //check if dial as been idle for more than the specified sleeptime
       while (touch != 4) { //enter sleep/idle mode (dial functions as a media controller) longpress to exit sleep/idle mode
         LEDanimation();  // LED animation
         Serial.println("idle");
         count += ahmsville_dial.knob();  //detecting knob rotations (returns a signed integer in relation to the direction of the rotation)
         touch = ahmsville_dial.capTouch();  //detecting capacitive touch (returns integer 1 - 4 or 0 when no touch is detected)
         Mediacontrol(); //media control function when in sleep/idle mode
-        ahmsville_dial.normalize();
+        ahmsville_dial.normalize(1);
       }
       timer = millis();
       transition = 2;
@@ -148,7 +148,7 @@ void function_selector() {
       launchapp_bycolor(); //launch app based on selected color
       selected();
     }
-    ahmsville_dial.normalize();
+    ahmsville_dial.normalize(1);
   }
 }
 
@@ -181,7 +181,7 @@ void in_app_controls(long color) {
       ahmsville_dial.dialCommand(ctrl, Chrome[3]);
     }
   }
-/***************************************************************************Lime (adobeuniversal)******************************************************************/
+  /***************************************************************************Lime (adobeuniversal)******************************************************************/
   else if (color == colors[2]) {
     //Touch Action
     if (touch == 1) { //app2 shortcut 1 maped to single tap on the dail
@@ -194,28 +194,28 @@ void in_app_controls(long color) {
         dualfunctiontouch[0] = !dualfunctiontouch[0];
       }
     }
-  else if (touch == 3) { //app2 shortcut 3 maped to shortpress tap on the dail
-    ahmsville_dial.dialCommand(Adobeuniversal[2]);
-  }
-
-  //Knob Action
-  if (count > 0) { //app2 shortcut maped to clockwise rotation on the knob
-    if (dualfunctiontouch[0] == LOW) {
-      ahmsville_dial.dialCommand(Adobeuniversal[1]);
-    } else {
-      ahmsville_dial.dialCommand(ctrl, Adobeuniversal[3]);
+    else if (touch == 3) { //app2 shortcut 3 maped to shortpress tap on the dail
+      ahmsville_dial.dialCommand(Adobeuniversal[2]);
     }
 
-  }
-  else if (count < 0) { //app2 shortcut maped to anticlockwise rotation on the knob
-    if (dualfunctiontouch[0] == LOW) {
-      ahmsville_dial.dialCommand(Adobeuniversal[0]);
-    } else {
-      ahmsville_dial.dialCommand(ctrl, Adobeuniversal[2]);
+    //Knob Action
+    if (count > 0) { //app2 shortcut maped to clockwise rotation on the knob
+      if (dualfunctiontouch[0] == LOW) {
+        ahmsville_dial.dialCommand(ctrl, Adobeuniversal[3]);
+      } else {
+        ahmsville_dial.dialCommand(Adobeuniversal[1]);
+      }
+
+    }
+    else if (count < 0) { //app2 shortcut maped to anticlockwise rotation on the knob
+      if (dualfunctiontouch[0] == LOW) {
+        ahmsville_dial.dialCommand(ctrl, Adobeuniversal[2]);
+      } else {
+        ahmsville_dial.dialCommand(Adobeuniversal[0]);
+      }
     }
   }
-}
-  
+
   /*********************************************************************Purple (Premier pro)*****************************************************************************/
   else if (color == colors[3]) {
     //Touch Action
@@ -237,6 +237,36 @@ void in_app_controls(long color) {
       ahmsville_dial.dialCommand(Premierepro[3]);
     }
   }
+
+  /***************************************************************************Aqua (fusion 360 / solidworks)******************************************************************/
+  else if (color == colors[4]) {
+    //Touch Action
+
+    if (touch == 2) { //toggle knob operation (spin or zoom model) double tap
+      dualfunctiontouch[0] = !dualfunctiontouch[0];
+    } else if (touch == 1) { //set model view to isometric (solidworks)
+      ahmsville_dial.dialCommand(ctrl, '7');
+    }
+
+
+    //Knob Action
+
+    if (dualfunctiontouch[0] == LOW) { //spinning operation
+      if (count != 0) {
+        ahmsville_dial.dialCommand_mousePress(MOUSE_MIDDLE);
+        ahmsville_dial.dialCommand_movePointer('x', -(count * 7));
+        ahmsville_dial.dialCommand_Release(MOUSE_MIDDLE);
+      }
+    } else if (dualfunctiontouch[0] == HIGH) { //zooming operation
+      if (count != 0) {
+        ahmsville_dial.dialCommand_keyPress(shift);
+        ahmsville_dial.dialCommand_mousePress(MOUSE_MIDDLE);
+        ahmsville_dial.dialCommand_movePointer('y', -(count * 7));
+        ahmsville_dial.dialCommand_Release(MOUSE_MIDDLE);
+      }
+    }
+  }
+
   /*********************************************************************Brown (Altium)***********************************************************************/
   else if (color == colors[5]) {
     //Touch Action
@@ -264,7 +294,7 @@ void in_app_controls(long color) {
       ahmsville_dial.dialCommand(Altium[3]);
     }
   }
-  
+
 }
 
 //This function is used to launch specific applications based on is color
@@ -367,7 +397,6 @@ void Login() {
         if (currentcolor == keycolor) {  //check if selected color is correct
           Keyboard.println(Password); //enter password
           delay(5);
-          Keyboard.press(KEY_RETURN);  //click enter
           Keyboard.releaseAll();
           selected();
           delay(hold);
@@ -381,7 +410,7 @@ void Login() {
       if (c_count >= numofcolors) {
         c_count = 0;
       }
-      ahmsville_dial.normalize();
+      ahmsville_dial.normalize(1);
     }
   }
   count = 0;
@@ -457,7 +486,7 @@ void LEDanimation() {
 void rainbow() {
   EVERY_N_MILLISECONDS( 20 ) {  //frames/milliseconds delay
     // FastLED's built-in rainbow generator
-    fill_rainbow( leds, NUM_LEDS, gHue, 2);
+    fill_rainbow( leds, NUM_LEDS, gHue, 1);
     // send the 'leds' array out to the actual LED strip
     FastLED.show();
   }

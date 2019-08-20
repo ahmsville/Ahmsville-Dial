@@ -32,7 +32,7 @@ long currentcolor;
 
 void setup()
 {
- ahmsville_dial.initialize_ahmsvilleDial();   //initialize ahmsville dial
+ ahmsville_dial.initialize_ahmsvilleDial(1);   //initialize ahmsville dial
   initializeLED();
 }
 
@@ -41,7 +41,7 @@ void loop()
   count += ahmsville_dial.knob();  //detecting knob rotations (returns a signed integer in relation to the direction of the rotation)
   touch = ahmsville_dial.capTouch();  //detecting capacitive touch (returns integer 1 - 4 or 0 when no touch is detected)
   Login();
-  ahmsville_dial.normalize();
+  ahmsville_dial.normalize(1);
 }
 
 

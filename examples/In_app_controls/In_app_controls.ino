@@ -45,7 +45,7 @@ char appfunctions[6] = {
 
 void setup()
 {
-  ahmsville_dial.initialize_ahmsvilleDial();   //initialize ahmsville dial
+  ahmsville_dial.initialize_ahmsvilleDial(1);   //initialize ahmsville dial
   initializeLED();
 }
 
@@ -70,7 +70,7 @@ void loop()
     //do nothing
   }
   In_app_knob_controls(ctrl, count); // application knob control function
-  ahmsville_dial.normalize();
+  ahmsville_dial.normalize(1);
 }
 
 void In_app_touch_controls(char keystroke1, char keystroke2, char func) { //touch function for 3 chain command shortcuts e.g CTRL+ALT+N

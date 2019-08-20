@@ -40,7 +40,7 @@ char appshortcuts[4] = {
 
 void setup()
 {
-  ahmsville_dial.initialize_ahmsvilleDial();   //initialize ahmsville dial
+  ahmsville_dial.initialize_ahmsvilleDial(1);   //initialize ahmsville dial
   initializeLED();
 }
 
@@ -51,7 +51,7 @@ void loop()
   if (touch != 0){
   ahmsville_dial.dialCommand(ctrl, alt, appshortcuts[touch - 1]); //function to launch application based on detected touch input
   }
-  ahmsville_dial.normalize();
+  ahmsville_dial.normalize(1);
 }
 
 /********************************************************************LED SETTINGS/ANIMATION*************************************************/
@@ -74,4 +74,3 @@ void rainbow() {
     gHue++;  // slowly cycle the "base color" through the rainbow
   }
 }
-

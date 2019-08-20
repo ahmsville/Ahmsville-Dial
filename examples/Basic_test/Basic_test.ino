@@ -22,7 +22,7 @@ uint8_t gHue = 0; // rotating "base color"
 int count = 0, touch;
 
 void setup() {
- ahmsville_dial.initialize_ahmsvilleDial();   //initialize ahmsville dial
+ ahmsville_dial.initialize_ahmsvilleDial(1);   //initialize ahmsville dial
   initializeLED();
 }
 
@@ -51,7 +51,7 @@ void loop() {
   else if (touch == 0) { //print "no input" if touch type is 0
     Serial.println("No input");
   }
-  ahmsville_dial.normalize();
+  ahmsville_dial.normalize(1);
 
 }
 
@@ -75,4 +75,3 @@ void rainbow() {
     gHue++;  // slowly cycle the "base color" through the rainbow
   }
 }
-
