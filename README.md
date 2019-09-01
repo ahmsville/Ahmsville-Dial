@@ -1,7 +1,7 @@
 # Ahmsville-Dial
 The Ahmsville dial is an Arduino based device inspired by Microsoft’s surface dial, the dial serves as a secondary dial controller for your pc, something you can use in Fusion 360, Solidworks, Premier pro and more. It can also be used for quick launching applications, zooming and scrolling operations in various applications, controlling your systems media/audio, as a color based key to login to your system and more…
 
-# See full project description - 
+# See full project description - https://hackaday.io/project/166688-an-arduino-dial-controller-ahmsville-dial
 
 Dependencies:
 
